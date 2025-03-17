@@ -31,5 +31,21 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "shell": {
+      "scope": [
+        {
+          "name": "execute-sh",
+          "cmd": "sh",
+          "args": true
+        },
+        {
+          "name": "execute-cmd",
+          "cmd": "cmd",
+          "args": true
+        }
+      ]
+    }
   }
 }
