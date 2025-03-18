@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "tauri-dev": "ENVIRONMENT_ENDPOINT=https://tmt6sji6nprxnx4fcfa3iznkce0fwdla.lambda-url.us-east-1.on.aws tauri dev"
+    "tauri-dev": "ENVIRONMENT_ENDPOINT=https://tmt6sji6nprxnx4fcfa3iznkce0fwdla.lambda-url.us-east-1.on.aws tauri dev",
+    "prompt": "node ./scripts/generatePrompt.js"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.3.0",
@@ -37,6 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^8.26.1",
     "@typescript-eslint/parser": "^8.26.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "clipboardy": "^4.0.0",
     "eslint": "^9.22.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.4",
