@@ -17,6 +17,36 @@
           "args": ["-c", { "validator": ".+" }]
         },
         {
+          "name": "execute-bash",
+          "cmd": "bash",
+          "args": ["-c", { "validator": ".+" }]
+        },
+        {
+          "name": "execute-zsh",
+          "cmd": "zsh",
+          "args": ["-c", { "validator": ".+" }]
+        },
+        {
+          "name": "execute-cmd",
+          "cmd": "cmd",
+          "args": ["/c", { "validator": ".+" }]
+        }
+      ]
+    },
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "execute-sh",
+          "cmd": "sh",
+          "args": ["-c", { "validator": ".+" }]
+        },
+        {
+          "name": "execute-bash",
+          "cmd": "bash",
+          "args": ["-c", { "validator": ".+" }]
+        },
+        {
           "name": "execute-cmd",
           "cmd": "cmd",
           "args": ["/c", { "validator": ".+" }]
@@ -25,6 +55,8 @@
     },
     "shell:allow-stdin-write",
     "shell:allow-kill",
+    "shell:allow-spawn",
+    "shell:allow-execute",
     "core:path:default"
   ]
 }

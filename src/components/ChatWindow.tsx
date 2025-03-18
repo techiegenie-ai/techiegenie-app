@@ -21,28 +21,10 @@ const ChatWindow: React.FC<{ planData: UserPlanResponse | null }> = ({ planData 
   const [sudoMessage, setSudoMessage] = useState('');
   const [chatEmpty, setChatEmpty] = useState(true);
   const [isSending, setIsSending] = useState(false);
-  const [systemOperator, setSystemOperator] = useState<SystemOperator | undefined>(undefined);
   const toast = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const setupSystemOperator = async () => {
-      try {
-        const operator = await SystemOperator.getInstance();
-        setSystemOperator(operator);
-      } catch (error) {
-        console.error('Failed to initialize SystemOperator:', error);
-        toast({
-          title: 'Initialization Error',
-          description: 'Could not initialize system operator. Some features may not work.',
-          status: 'error',
-          duration: 9000,
-          isClosable: true,
-        });
-      }
-    };
-    setupSystemOperator();
-
     const handleSudoRequest = (message: string) => {
       setSudoMessage(message);
     };
@@ -140,17 +122,8 @@ const ChatWindow: React.FC<{ planData: UserPlanResponse | null }> = ({ planData 
   };
 
   const handleSudoPasswordSubmit = async () => {
-    if (!systemOperator) {
-      toast({
-        title: 'Error',
-        description: 'System operator not initialized. Cannot process sudo password.',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-      return;
-    }
     try {
+      const systemOperator = await SystemOperator.getInstance();
       const result = await systemOperator.processSudoPassword(sudoPassword);
       eventEmitter.emit('sudoPasswordResponse', result);
     } catch (error) {

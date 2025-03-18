@@ -16,17 +16,9 @@ const SudoPasswordModal: React.FC<SudoPasswordModalProps> = ({
   sudoPassword,
   setSudoPassword,
   handleSudoPasswordSubmit,
-  handleSudoPasswordCancel
+  handleSudoPasswordCancel,
 }) => {
-  const initialRef = React.useRef(null);
-
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     // Focus on the input when modal opens
-  //     const input = document.getElementById('sudo-password-input') as HTMLInputElement;
-  //     input?.focus();
-  //   }
-  // }, [isOpen]);
+  const initialRef = React.useRef<HTMLInputElement>(null);
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
@@ -34,8 +26,19 @@ const SudoPasswordModal: React.FC<SudoPasswordModalProps> = ({
     }
   };
 
+  // Ensure cancellation resets the modal state
+  const onCancel = () => {
+    handleSudoPasswordCancel();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={handleSudoPasswordCancel} isCentered closeOnOverlayClick={false}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onCancel} // Use onCancel to ensure closure
+      isCentered
+      closeOnOverlayClick={false}
+      initialFocusRef={initialRef}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Enter Sudo Password</ModalHeader>
@@ -56,7 +59,7 @@ const SudoPasswordModal: React.FC<SudoPasswordModalProps> = ({
             <Button colorScheme="blue" mr={2} onClick={handleSudoPasswordSubmit}>
               OK
             </Button>
-            <Button variant='ghost' onClick={handleSudoPasswordCancel}>
+            <Button variant="ghost" onClick={onCancel}>
               Cancel
             </Button>
           </HStack>

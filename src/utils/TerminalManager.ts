@@ -16,7 +16,22 @@ class TerminalManager {
   static async getInstance(): Promise<TerminalManager> {
     const osPlatform = await invoke<string>('get_platform');
     const isWindows = osPlatform === 'windows';
-    const shell = isWindows ? 'execute-cmd' : 'execute-sh';
+    let shell: string;
+    switch (osPlatform) {
+      case 'macos':
+        shell = 'execute-zsh'
+        break;
+        case 'linux':
+        shell = 'execute-sh'
+        break;
+      case 'windows':
+        shell = 'execute-cmd'
+        break;
+      default:
+        console.warn('Unsupported platform');
+        shell = 'execute-sh'
+        break;
+    }
     return new TerminalManager(isWindows, shell);
   }
 
@@ -30,8 +45,13 @@ class TerminalManager {
     const child = await cmd.spawn();
     await child.write(pwd + '\n');
     return new Promise((resolve) => {
-      cmd.on('close', (data) => resolve(data.code === 0 ? (this.password = pwd, true) : (this.password = null, false)));
-      cmd.on('error', () => resolve(false));
+
+      cmd.on('close', (data) => {
+        resolve(data.code === 0 ? (this.password = pwd, true) : (this.password = null, false));
+      });
+      cmd.on('error', () => {
+        resolve(false);
+      });
     });
   }
 
@@ -83,9 +103,39 @@ class TerminalManager {
 
   public async killProcess(id: string): Promise<void> {
     const child = this.processes.get(id);
-    console.log('child', child?.pid);
-    if (child) {
-      await child.kill().then(() => console.log('ok')).catch(e => console.log(e.message));
+    if (!child || !child.pid) {
+      console.log(`No process found with ID: ${id}`);
+      this.processes.delete(id);
+      return;
+    }
+
+    const pid = child.pid;
+
+    try {
+      let args: string[];
+      if (this.isWindows) {
+        // Forcefully terminate the process and its subtree on Windows
+        args = ['/c', 'taskkill /PID ' + pid.toString() + ' /F /T']
+      } else {
+        // Use SIGKILL on Unix-like systems
+        args = ['-c', 'kill -9 ' + pid.toString()]
+      }
+      const killCommand = Command.create(this.shell, args);
+
+      const killResult = await killCommand.execute();
+      if (killResult.code === 0) {
+        console.log(`Process ${pid} terminated successfully`);
+      } else {
+        console.error(`Failed to terminate process ${pid}: ${killResult.stderr}`);
+      }
+
+      // Clean up regardless of kill success to avoid stale entries
+      this.processes.delete(id);
+
+      // Attempt the original kill as a fallback
+      await child.kill().catch((e) => console.log(`Fallback kill failed: ${e.message}`));
+    } catch (error) {
+      console.error(`Error terminating process ${pid}:`, error);
       this.processes.delete(id);
     }
   }
