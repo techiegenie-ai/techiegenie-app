@@ -142,7 +142,9 @@ const Terminal: React.FC = () => {
     };
   }, [isTerminalVisible]);
 
-  const handleCancel = async (id: string) => {
+  const handleCancel = async (id: string, isRunning: boolean) => {
+    if (!isRunning) return;
+    console.log('Cabcel:', id);
     const systemOperator = await SystemOperator.getInstance();
     await systemOperator.terminal.killProcess(id);
   };
@@ -206,7 +208,7 @@ const Terminal: React.FC = () => {
                 entryId={entry.id}
                 onMouseEnter={() => setHoveredId(entry.id)}
                 onMouseLeave={() => setHoveredId(null)}
-                onClick={() => handleCancel(entry.id)}
+                onClick={() => handleCancel(entry.id, entry.isRunning)}
               />
               <Safety
                 requiresApproval={entry.requiresApproval}

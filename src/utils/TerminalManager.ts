@@ -37,9 +37,9 @@ class TerminalManager {
 
   public async executeCommand(
     command: string,
-    id: string
+    id: string,
+    silent = false,
   ): Promise<{ stdout: string; stderr: string; code: number; result: boolean }> {
-    if (this.isWindows) throw new Error('Not implemented for Windows');
     command = command.trim();
     let fullCommand = command;
     if (command.startsWith('sudo')) {
@@ -57,28 +57,35 @@ class TerminalManager {
     let stderr = '';
     cmd.stdout.on('data', (data) => {
       stdout += data;
-      eventEmitter.emit('terminalOutput', { id, stdout: data });
+      if (!silent) eventEmitter.emit('terminalCommand', id, undefined, undefined, data, undefined, undefined, undefined);
     });
     cmd.stderr.on('data', (data) => {
       stderr += data;
-      eventEmitter.emit('terminalOutput', { id, stderr: data });
+      if (!silent) eventEmitter.emit('terminalCommand', id, undefined, undefined, undefined, data, undefined, undefined);
     });
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       cmd.on('close', (data) => {
+        if (!silent) eventEmitter.emit('terminalCommand', id, undefined, undefined, undefined, undefined, true, undefined);
         this.processes.delete(id);
         const result = data.signal === null;
         if (!result) stderr += '\n^C';
         resolve({ stdout, stderr, code: data.code ?? 0, result });
       });
-      cmd.on('error', (error) => resolve({ stdout, stderr: error, code: 1, result: false }));
+      cmd.on('error', (error) => {
+        this.processes.delete(id);
+        if (!silent) eventEmitter.emit('terminalCommand', id, undefined, undefined, undefined, undefined, false, undefined);
+        console.log('Error:', error)
+        reject(error);
+      });
     });
   }
 
   public async killProcess(id: string): Promise<void> {
     const child = this.processes.get(id);
+    console.log('child', child?.pid);
     if (child) {
-      await child.kill();
+      await child.kill().then(() => console.log('ok')).catch(e => console.log(e.message));
       this.processes.delete(id);
     }
   }

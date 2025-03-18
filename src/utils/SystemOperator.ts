@@ -5,6 +5,7 @@ import { TerminalManager } from './TerminalManager';
 import { UserHandshake } from './protocol';
 
 class SystemOperator {
+  private static instance: SystemOperator;
   public terminal: TerminalManager;
   public system_info: string;
   public shell_info: Promise<string>;
@@ -24,16 +25,19 @@ class SystemOperator {
 
   /** Creates an instance of SystemOperator with initialized system info */
   static async getInstance(): Promise<SystemOperator> {
-    const terminal = await TerminalManager.getInstance();
-    const system_info = await SystemOperator._getSystemInfo(terminal);
-    return new SystemOperator(terminal, system_info);
+    if (!SystemOperator.instance) {
+      const terminal = await TerminalManager.getInstance();
+      const system_info = await SystemOperator._getSystemInfo(terminal);
+      SystemOperator.instance = new SystemOperator(terminal, system_info);
+    }
+    return SystemOperator.instance;
   }
 
   /** Retrieves system information using a platform-specific command */
   static async _getSystemInfo(terminal: TerminalManager): Promise<string> {
     const currentPlatform = await invoke<string>('get_platform');
     const command = currentPlatform === 'windows' ? 'systeminfo' : 'uname -a';
-    const res = await terminal.executeCommand(command, 'system-info');
+    const res = await terminal.executeCommand(command, 'system-info', true);
     return res.stdout ? res.stdout.trim() : res.stderr.trim() || '';
   }
 
@@ -84,11 +88,12 @@ class SystemOperator {
     cmd: string,
     _desc: string,
     id: string
-  ): Promise<{ stdout: string; stderr: string; result?: boolean }> {
+  ): Promise<{ stdout: string; stderr: string; code: number; result?: boolean }> {
     const result = await this.terminal.executeCommand(cmd, id);
     return {
       stdout: result.stdout,
       stderr: result.stderr,
+      code: result.code,
       result: result.result,
     };
   }

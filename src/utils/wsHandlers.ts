@@ -87,7 +87,7 @@ export async function handleTechieTools(toolCalls: TechieTools) {
     const toolResult: UserTerminal = {
       out: processCommandOutput(result.stdout).slice(0, 4 * 1024), // Limit to 4KB
       err: processCommandOutput(result.stderr).slice(0, 4 * 1024), // Limit to 4KB
-      exit_code: result.result ? 0 : 1, // Infer exit code from result boolean
+      exit_code: result.code,
       result: result.result ?? true,
       id: tool.id,
       type: 'cmd',
