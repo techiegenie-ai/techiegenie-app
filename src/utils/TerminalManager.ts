@@ -1,6 +1,6 @@
 import { Command, Child } from '@tauri-apps/plugin-shell';
-import { platform } from '@tauri-apps/plugin-os';
 import eventEmitter from './eventEmitter';
+import { invoke } from '@tauri-apps/api/core';
 
 class TerminalManager {
   private password: string | null = null;
@@ -8,21 +8,25 @@ class TerminalManager {
   private shell: string = 'execute-sh';
   private isWindows: boolean = false;
 
-  constructor() {
-    this._initShell();
+  constructor(isWindows: boolean, shell: string) {
+    this.isWindows = isWindows;
+    this.shell = shell;
   }
 
-  private async _initShell() {
-    const osPlatform = platform();
-    this.isWindows = osPlatform === 'windows';
-    this.shell = this.isWindows ? 'execute-cmd' : 'execute-sh';
+  static async getInstance(): Promise<TerminalManager> {
+    const osPlatform = await invoke<string>('get_platform');
+    const isWindows = osPlatform === 'windows';
+    const shell = isWindows ? 'execute-cmd' : 'execute-sh';
+    return new TerminalManager(isWindows, shell);
   }
 
   public async setPassword(pwd: string): Promise<boolean> {
     if (this.isWindows) throw new Error('Not implemented for Windows');
     if (!pwd) throw new Error('Password cannot be blank');
     const fullCommand = 'sudo -S -v';
-    const cmd = Command.create(this.shell, [fullCommand]);
+    const args = [this.isWindows ? '/c' : '-c', fullCommand]
+    console.log('Executing command:', { shell: this.shell, args: args });
+    const cmd = Command.create(this.shell, args);
     const child = await cmd.spawn();
     await child.write(pwd + '\n');
     return new Promise((resolve) => {
@@ -42,7 +46,9 @@ class TerminalManager {
       if (!this.password) return { stdout: '', stderr: 'sudo: no password provided', code: 1, result: false };
       fullCommand = `sudo -S ${command.slice(5)}`;
     }
-    const cmd = Command.create(this.shell, [fullCommand]);
+    const args = [this.isWindows ? '/c' : '-c', fullCommand]
+    console.log('Executing command:', { shell: this.shell, args: args });
+    const cmd = Command.create(this.shell, args);
     const child = await cmd.spawn();
     this.processes.set(id, child);
     if (command.startsWith('sudo')) await child.write(this.password + '\n');

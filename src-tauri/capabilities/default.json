@@ -14,22 +14,12 @@
         {
           "name": "execute-sh",
           "cmd": "sh",
-          "args": [
-            "-c",
-            {
-              "validator": "\\S+"
-            }
-          ]
+          "args": ["-c", { "validator": ".+" }]
         },
         {
           "name": "execute-cmd",
           "cmd": "cmd",
-          "args": [
-            "/c",
-            {
-              "validator": "\\S+"
-            }
-          ]
+          "args": ["/c", { "validator": ".+" }]
         }
       ]
     },

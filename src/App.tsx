@@ -1,51 +1,111 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import React, { useEffect, useState } from 'react';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
+import ChatWindow from './components/ChatWindow';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from './firebaseConfig';
+import AuthScreen from './components/AuthScreen';
+import { UserPlanResponse } from './components/PlanModal';
+import Environment from './utils/Environment';
+import eventEmitter from './utils/eventEmitter';
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+const App: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [planData, setPlanData] = useState<UserPlanResponse | null>(null); // State for storing plan data
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        await currentUser.reload(); // Refresh the user's data
+        if (currentUser.emailVerified) {
+          setUser(currentUser);
+          setLoading(false);
+          eventEmitter.emit('checkCredits'); // Fetch user's plan and credits
+        } else {
+          setUser(null);
+          setLoading(false);
+        }
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Polling for email verification status every 5 seconds
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (!user) {
+      interval = setInterval(async () => {
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          await currentUser.reload();
+          if (currentUser.emailVerified) {
+            setUser(currentUser);
+            if (interval) {
+              clearInterval(interval);
+            }
+          }
+        }
+      }, 5000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [user]);
+
+  useEffect(() => {
+    const handleCheckCredits = () => {
+      fetchUserPlanData();
+    };
+    eventEmitter.on('checkCredits', handleCheckCredits);
+    return () => {
+      eventEmitter.off('checkCredits', handleCheckCredits);
+    };
+  }, [])
+
+  const fetchUserPlanData = async () => {
+    try {
+      const env = await Environment.getInstance();
+      const profile = env.getProfileData();
+      const currentUser = auth.currentUser;
+      if (!currentUser) throw new Error('User not authenticated');
+      const token = await currentUser.getIdToken();
+      const response = await fetch(`${profile.user}/user/plan`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data: UserPlanResponse = await response.json();
+        setPlanData(data);
+      } else {
+        console.error('Failed to fetch plan data');
+      }
+    } catch (error) {
+      console.error('Error fetching plan data:', error);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    <ChakraProvider>
+      <Flex direction="column" height="100vh">
+        {user ? <ChatWindow planData={planData} /> : <AuthScreen />}
+      </Flex>
+    </ChakraProvider>
   );
-}
+};
 
 export default App;

@@ -1,5 +1,5 @@
+// src/utils/SystemOperator.ts
 import { invoke } from '@tauri-apps/api/core';
-import { platform, type, arch } from '@tauri-apps/plugin-os';
 import { homeDir } from '@tauri-apps/api/path';
 import { TerminalManager } from './TerminalManager';
 import { UserHandshake } from './protocol';
@@ -24,17 +24,17 @@ class SystemOperator {
 
   /** Creates an instance of SystemOperator with initialized system info */
   static async getInstance(): Promise<SystemOperator> {
-    const terminal = new TerminalManager();
+    const terminal = await TerminalManager.getInstance();
     const system_info = await SystemOperator._getSystemInfo(terminal);
     return new SystemOperator(terminal, system_info);
   }
 
   /** Retrieves system information using a platform-specific command */
   static async _getSystemInfo(terminal: TerminalManager): Promise<string> {
-    const currentPlatform = await platform();
+    const currentPlatform = await invoke<string>('get_platform');
     const command = currentPlatform === 'windows' ? 'systeminfo' : 'uname -a';
     const res = await terminal.executeCommand(command, 'system-info');
-    return res.stdout ? res.stdout.trim() : res.stderr.trim();
+    return res.stdout ? res.stdout.trim() : res.stderr.trim() || '';
   }
 
   /** Gets the default shell path, optionally returning only the name */
@@ -60,9 +60,9 @@ class SystemOperator {
 
   /** Gets a formatted OS name */
   private async _getOsName(): Promise<string> {
-    const plat = platform(); // e.g., 'windows', 'linux', 'macos'
-    const osType = type(); // e.g., 'Windows_NT', 'Linux', 'Darwin'
-    const osArch = arch(); // e.g., 'x86_64', 'arm64'
+    const plat = await invoke<string>('get_platform');
+    const osType = await invoke<string>('get_os_type');
+    const osArch = await invoke<string>('get_arch');
     return `${plat} ${osType} (${osArch})`;
   }
 
