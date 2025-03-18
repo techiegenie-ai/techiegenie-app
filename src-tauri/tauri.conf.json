@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "techiegenie-app",
+  "productName": "TechieGenie",
   "version": "0.1.0",
   "identifier": "co.techiegenie.app",
   "build": {
@@ -12,9 +12,9 @@
   "app": {
     "windows": [
       {
-        "title": "techiegenie-app",
-        "width": 800,
-        "height": 600
+        "title": "TechieGenie",
+        "width": 1200,
+        "height": 800
       }
     ],
     "security": {
