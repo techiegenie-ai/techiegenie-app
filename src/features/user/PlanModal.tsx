@@ -100,14 +100,14 @@ const PlanModal: React.FC<{ isOpen: boolean, onClose: () => void, onTopUpOpen: (
         {planData?.current_plan === 'free' ? (
         <>
             <Skeleton isLoaded={!!planData} fitContent={true} mb={2}><Text>You are currently on the Free Plan.</Text></Skeleton>
-            <Skeleton isLoaded={!!planData} fitContent={true} my={2}><Text>Enjoy basic access to TechieGenie with {planData?.plans.find(plan => plan.plan === 'free')?.monthly_limit + planData?.credits.purchased_remaining - planData.credits.used} Task Credits left out of {planData?.plans.find(plan => plan.plan === 'free')?.monthly_limit + planData?.credits.purchased_remaining} this month.</Text></Skeleton>
+            <Skeleton isLoaded={!!planData} fitContent={true} my={2}><Text>Enjoy basic access to TechieGenie with {(planData?.plans.find(plan => plan.plan === 'free')?.monthly_limit ?? 0) + planData?.credits.purchased_remaining - planData.credits.used} Task Credits left out of {(planData?.plans.find(plan => plan.plan === 'free')?.monthly_limit ?? 0) + planData?.credits.purchased_remaining} this month.</Text></Skeleton>
             <Skeleton isLoaded={!!planData} fitContent={true} my={2} mt={2}><Text mt={2}>Your credits will refresh on <Text as="span" fontWeight="semibold">{formatDate(planData?.next_billing_date)}</Text>. Keep the tasks rolling!</Text></Skeleton>
         </>
       ) : (
         <>
               <Skeleton isLoaded={!!planData} fitContent={true} mb={2} ><Text>You are currently on the Pro Plan.</Text></Skeleton>
-              <Skeleton isLoaded={!!planData} fitContent={true} my={2}><Text>With {planData?.plans.find(plan => plan.plan === 'pro')?.monthly_limit + planData?.credits.purchased_remaining - planData?.credits.used} of your {planData?.plans.find(plan => plan.plan === 'pro')?.monthly_limit + planData?.credits.purchased_remaining} purchased Task Credits remaining.</Text></Skeleton>
-              <Skeleton isLoaded={!!planData} fitContent={true} my={2} mt={2}><Text mt={2}>Your credits will refresh on <Text as="span" fontWeight="semibold">{formatDate(planData?.next_billing_date)}</Text>. Keep the tasks rolling!</Text></Skeleton>
+              <Skeleton isLoaded={!!planData} fitContent={true} my={2}><Text>With {(planData?.plans.find(plan => plan.plan === 'pro')?.monthly_limit ?? 0) + (planData?.credits.purchased_remaining ?? 0) - (planData?.credits.used ?? 0)} of your {(planData?.plans.find(plan => plan.plan === 'pro')?.monthly_limit ?? 0) + (planData?.credits.purchased_remaining ?? 0)} purchased Task Credits remaining.</Text></Skeleton>
+              <Skeleton isLoaded={!!planData} fitContent={true} my={2} mt={2}><Text mt={2}>Your credits will refresh on <Text as="span" fontWeight="semibold">{formatDate((planData?.next_billing_date ?? 0))}</Text>. Keep the tasks rolling!</Text></Skeleton>
         </>
       )}
     </>
@@ -146,7 +146,7 @@ const PlanModal: React.FC<{ isOpen: boolean, onClose: () => void, onTopUpOpen: (
                   </Skeleton>
                   <Skeleton isLoaded={!!planData} my={2}>
                     <Text>
-                      You've used {planData?.credits.used} of {planData?.plans.find(plan => plan.plan === 'free')?.monthly_limit + planData?.credits.purchased_remaining} Task Credits.
+                      You've used {planData?.credits.used} of {(planData?.plans.find(plan => plan.plan === 'free')?.monthly_limit ?? 0) + (planData?.credits.purchased_remaining ?? 0)} Task Credits.
                     </Text>
                   </Skeleton>
                 </>
@@ -193,7 +193,7 @@ const PlanModal: React.FC<{ isOpen: boolean, onClose: () => void, onTopUpOpen: (
                   </Skeleton>
                   <Skeleton isLoaded={!!planData} my={2}>
                     <Text>
-                      Remaining: {planData?.plans.find(plan => plan.plan === 'pro')?.monthly_limit + planData?.credits.purchased_remaining - planData?.credits.used} credits.
+                      Remaining: {planData?.plans.find(plan => plan.plan === 'pro')?.monthly_limit ?? 0 + (planData?.credits.purchased_remaining ?? 0) - (planData?.credits.used ?? 0)} credits.
                     </Text>
                   </Skeleton>
                 </>
