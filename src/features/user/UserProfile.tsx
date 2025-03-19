@@ -11,11 +11,11 @@ import {
 } from '@chakra-ui/react';
 import { HiLogout, HiOutlineBadgeCheck, HiOutlineCog, HiOutlineUser } from 'react-icons/hi';
 import { signOut } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { auth } from '@/config/firebaseConfig';
 
 // Lazy load the PlanModal component
 const PlanModal = React.lazy(() => import('./PlanModal'));
-const SettingsModal = React.lazy(() => import('./SettingsModal'));
+const SettingsModal = React.lazy(() => import('@/features/modals/SettingsModal'));
 const TopUpModal = React.lazy(() => import('./TopUpModal'));
 
 const UserProfile: React.FC = () => {

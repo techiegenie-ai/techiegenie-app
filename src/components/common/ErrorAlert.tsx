@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, Box, ScaleFade } from '@chakra-ui/react';
-import { TechieError } from '../utils/protocol';
+import { TechieError } from '@/utils';
 
 interface ErrorAlertProps {
   error: TechieError;

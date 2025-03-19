@@ -27,9 +27,14 @@ export default [
           extensions: [".js", ".jsx", ".ts", ".tsx"]
         },
         typescript: {
-          project: "./tsconfig.json"
+          project: "./tsconfig.json",
+          alwaysTryTypes: true,
         }
       }
+    },
+    env: {
+      browser: true, // For browser globals like window, document
+      node: true,    // For Node.js globals like NodeJS, process
     },
     plugins: {
       "@typescript-eslint": tseslint.plugin,

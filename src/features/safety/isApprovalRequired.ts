@@ -1,19 +1,20 @@
-import { SafetyLevel } from '../components/SafetySettings';
-import { AuditReport } from './protocol';
+import { SafetyLevel } from '@/features/safety';
+import { AuditReport } from '@/utils';
 
 export const DEFAULT_SAFETY_LEVEL = 2;
 const LOCAL_STORAGE_KEY_SAFETY_LEVEL = 'safetyLevel';
 
 export function isApprovalRequired(report?: AuditReport): boolean {
+  if (report == null) return true;
   switch (getSafetyLevel()) {
     case SafetyLevel.Basic:
-      return ["Safe", "Warning", "Danger"].includes(report?.category)
+      return ["Safe", "Warning", "Danger"].includes(report.category)
     case SafetyLevel.Cautious:
-      return ["Warning", "Danger"].includes(report?.category)
+      return ["Warning", "Danger"].includes(report.category)
     case SafetyLevel.Critical:
-      return ["Danger"].includes(report?.category)
+      return ["Danger"].includes(report.category)
     default:
-      return ["Danger"].includes(report?.category)
+      return ["Danger"].includes(report.category)
   }
 }
 

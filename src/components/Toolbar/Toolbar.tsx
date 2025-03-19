@@ -1,9 +1,9 @@
 import React from 'react';
 import { Flex, IconButton, Tooltip } from '@chakra-ui/react';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
-import UserProfile from './UserProfile';
-import ConsumptionIndicator from './ConsumptionIndicator';
-import { clearChat } from '../utils/utils';
+import { UserProfile } from '@/features/user';
+import { ConsumptionIndicator } from '@/components/common';
+import { clearChat } from '../../utils/utils';
 
 const Toolbar: React.FC = () => {
   const handleNewChat = async () => {

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { VStack, Text, useRadioGroup, Box, Divider } from '@chakra-ui/react';
 import { HiShieldCheck, HiShieldExclamation } from 'react-icons/hi';
-import RadioCard from './RadioCard';
-import { getSafetyLevel, setSafetyLevel } from '../utils/isApprovalRequired';
-import { HiShieldX } from './CustomIcons';
+import { RadioCard, HiShieldX } from '@/components/common';
+import { getSafetyLevel, setSafetyLevel } from '@/features/safety';
 
 export enum SafetyLevel {
   Basic = 0,

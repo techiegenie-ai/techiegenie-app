@@ -1,4 +1,4 @@
-import { auth } from '../firebaseConfig';
+import { auth } from '../config/firebaseConfig';
 import eventEmitter from './eventEmitter'
 import { TechieError } from './protocol'
 

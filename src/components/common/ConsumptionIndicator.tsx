@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box } from '@chakra-ui/react';
-import eventEmitter from '../utils/eventEmitter';
-import { ConsumptionData } from '../utils/Environment';
+import { ConsumptionData, eventEmitter } from '@/utils';
 
 const ConsumptionIndicator: React.FC = () => {
   const [consumption, setConsumption] = useState<ConsumptionData | null>(null);

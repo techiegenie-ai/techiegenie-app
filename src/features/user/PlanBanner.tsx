@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { Box, Button, Text } from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/hooks';
 
-const TopUpModal = React.lazy(() => import('./TopUpModal'));
+const TopUpModal = React.lazy(() => import('@/features/user/TopUpModal'));
 
 const PlanBanner: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

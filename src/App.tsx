@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
-import ChatWindow from './components/ChatWindow';
+import {ChatWindow} from '@/features/chat';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from './firebaseConfig';
-import AuthScreen from './components/AuthScreen';
-import { UserPlanResponse } from './components/PlanModal';
-import Environment from './utils/Environment';
-import eventEmitter from './utils/eventEmitter';
-import { CloseConfirmationDialog } from './components/CloseConfirmationDialog';
+import { auth } from '@/config/firebaseConfig';
+import { AuthScreen } from '@/features/auth';
+import { UserPlanResponse } from '@/features/user';
+import { Environment, eventEmitter } from '@/utils';
+import { CloseConfirmationDialog } from '@/features/modals';
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { SystemOperator } from './utils/SystemOperator';
+import { SystemOperator } from '@/features/terminal';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);

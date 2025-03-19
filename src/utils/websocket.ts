@@ -4,8 +4,8 @@ import { parseTechieMessage, UserMessages, TechieMessages, TechieError } from '.
 import eventEmitter from './eventEmitter';
 import { handleTechieDone, handleTechieError, handleTechieMessage, handleTechieTools } from './wsHandlers';
 import Environment from './Environment';
-import { auth } from '../firebaseConfig';
-import { SystemOperator } from './SystemOperator';
+import { auth } from '../config/firebaseConfig';
+import { SystemOperator } from '../features/terminal/SystemOperator';
 
 export let socket: WebSocket | null = null;
 let pendingMessage: UserMessages | null = null;

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Input, VStack, Text, Divider, Icon, HStack, InputGroup, InputRightElement, IconButton } from '@chakra-ui/react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, AuthError, AuthErrorCodes, sendEmailVerification } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { auth } from '@/config/firebaseConfig';
 import { HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
-import { GoogleIcon } from './CustomIcons';
+import { GoogleIcon } from '@/components/common';
 import validator from 'validator';
 
 const AuthScreen: React.FC = () => {
@@ -47,7 +47,7 @@ const AuthScreen: React.FC = () => {
           setAuthError('Invalid credential. Would you like to reset password?');
           break;
         default:
-          setAuthError(error.message);
+          setAuthError((error as AuthError).message);
           setShowResetOption(false);
           break;
       }
@@ -59,7 +59,7 @@ const AuthScreen: React.FC = () => {
     try {
       await signInWithPopup(auth, provider);
     } catch (error) {
-      setAuthError('Google Sign-In Error: ' + error.message);
+      setAuthError('Google Sign-In Error: ' + (error as AuthError).message);
       setShowResetOption(false);
     }
   };
@@ -70,7 +70,7 @@ const AuthScreen: React.FC = () => {
       setAuthError('Password reset email sent. Please check your inbox.');
       setShowResetOption(false);
     } catch (error) {
-      setAuthError('Error sending password reset email: ' + error.message);
+      setAuthError('Error sending password reset email: ' + (error as AuthError).message);
       setShowResetOption(false);
     }
   };
@@ -83,7 +83,7 @@ const AuthScreen: React.FC = () => {
         setAuthError('Verification email resent. Please check your inbox.');
       }
     } catch (error) {
-      setAuthError('Error resending verification email: ' + error.message);
+      setAuthError('Error resending verification email: ' + (error as AuthError).message);
     }
   };
 

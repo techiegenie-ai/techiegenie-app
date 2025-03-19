@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Code, Heading, Link, List, ListItem, VStack, Text, Image } from '@chakra-ui/react';
-import { UserMessage, TechieMessage } from '../utils/protocol';
-import eventEmitter from '../utils/eventEmitter';
+import { UserMessage, TechieMessage, eventEmitter } from '@/utils';
 import ReactMarkdown from 'react-markdown';
-import TypingIndicator from './TypingIndicator';
+import { TypingIndicator } from '@/features/chat';
 
 export interface ConversationMessage {
   source: 'user' | 'server' | 'typing';

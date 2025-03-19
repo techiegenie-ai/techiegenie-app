@@ -1,19 +1,14 @@
 // src/components/ChatWindow.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, HStack, Textarea, Button, Flex, useToast } from '@chakra-ui/react';
-import eventEmitter from '../utils/eventEmitter';
-import { sendMessage } from '../utils/websocket';
-import { UserMessage, TechieError } from '../utils/protocol';
+import { eventEmitter, sendMessage, UserMessage, TechieError, Environment } from '@/utils';
+
 import { HiOutlinePaperAirplane } from 'react-icons/hi';
-import Chat, { ConversationMessage } from './Chat';
-import ExampleQueries from './ExampleQueries';
-import Terminal from './Terminal';
-import SudoPasswordModal from './SudoPasswordModal';
-import Toolbar from './Toolbar';
-import Environment from '../utils/Environment';
-import PlanBanner from './PlanBanner';
-import { UserPlanResponse } from './PlanModal';
-import { SystemOperator } from '../utils/SystemOperator';
+import { Chat, ConversationMessage, ExampleQueries } from '@/features/chat';
+import { Terminal, SystemOperator } from '@/features/terminal';
+import { SudoPasswordModal } from '@/features/modals';
+import { Toolbar } from '@/components/Toolbar';
+import { PlanBanner, UserPlanResponse } from '@/features/user';
 
 const ChatWindow: React.FC<{ planData: UserPlanResponse | null }> = ({ planData }) => {
   const [message, setMessage] = useState('');

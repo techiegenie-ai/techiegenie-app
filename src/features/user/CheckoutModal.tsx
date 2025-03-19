@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import Environment from '../utils/Environment';
-import { auth } from '../firebaseConfig';
+import { Environment } from '@/utils';
+import { auth } from '@/config/firebaseConfig';
 
 const stripePromise = loadStripe('pk_test_51NxYN8H3Z9Fj8AUwS8ZSDrbfc8ynrkufVE1iwlUzWOw6b0epu1xZ6yuPUTowFgJLsFfYm2ricBvpM0KoNx3omUUt00Cr9V4eGv');
 

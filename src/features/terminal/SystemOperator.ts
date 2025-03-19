@@ -1,8 +1,8 @@
 // src/utils/SystemOperator.ts
 import { invoke } from '@tauri-apps/api/core';
 import { homeDir } from '@tauri-apps/api/path';
-import { TerminalManager } from './TerminalManager';
-import { UserHandshake } from './protocol';
+import { TerminalManager } from '@/features/terminal';
+import { UserHandshake } from '@/utils';
 
 class SystemOperator {
   private static instance: SystemOperator;

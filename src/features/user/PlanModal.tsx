@@ -16,8 +16,8 @@ import {
   Skeleton,
   Link,
 } from '@chakra-ui/react';
-import Environment from '../utils/Environment';
-import { auth } from '../firebaseConfig';
+import { Environment } from '@/utils';
+import { auth } from '@/config/firebaseConfig';
 
 export type UserPlanResponse = {
   plans: Plan[];

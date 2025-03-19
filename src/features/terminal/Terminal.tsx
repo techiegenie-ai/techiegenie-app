@@ -2,14 +2,10 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, VStack, Text, Collapse, IconButton } from '@chakra-ui/react';
-import eventEmitter from '../utils/eventEmitter';
+import { eventEmitter, AuditReport, processCommandOutput } from '@/utils';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi';
-import { AuditReport } from '../utils/protocol';
-import CommandPromptIcon from './CommandPromptIcon';
-import Safety from './Safety';
-import { isApprovalRequired } from '../utils/isApprovalRequired';
-import { processCommandOutput } from '../utils/processCommandOutput';
-import { SystemOperator } from '../utils/SystemOperator';
+import { CommandPromptIcon, SystemOperator } from '@/features/terminal';
+import { Safety, isApprovalRequired } from '@/features/safety';
 
 interface TerminalEntry {
   id: string;

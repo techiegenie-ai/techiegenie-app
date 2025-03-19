@@ -19,8 +19,8 @@ import {
   Fade,
 } from '@chakra-ui/react';
 import { HiShieldCheck, HiShieldExclamation } from 'react-icons/hi';
-import { AuditReport } from '../utils/protocol';
-import { HiShieldMinus, HiShieldX } from './CustomIcons';
+import { AuditReport } from '@/utils';
+import { HiShieldMinus, HiShieldX } from '@/components/common';
 
 interface SafetyIconProps extends IconProps {
   category?: AuditReport['category'];

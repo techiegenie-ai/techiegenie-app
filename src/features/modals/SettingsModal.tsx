@@ -17,7 +17,7 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { HiOutlineCog, HiOutlineCollection, HiOutlineShieldExclamation } from 'react-icons/hi';
-import SafetySettings from './SafetySettings';
+import SafetySettings from '../safety/SafetySettings';
 
 interface SettingsModalProps {
   isOpen: boolean;

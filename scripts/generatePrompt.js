@@ -12,7 +12,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 
 const ignoreFiles = [
-    "src/**",
+    // "src/**",
+    "src-tauri/**",
     "src/firebaseConfig.ts",
     "src-tauri/.gitignore",
     "src-tauri/Cargo.lock",

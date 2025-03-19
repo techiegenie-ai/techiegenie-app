@@ -3,11 +3,11 @@
 import { TechieError, TechieMessage, TechieTerminal, TechieTools, UserSudo, UserTerminal, UserTools, UserToolsInner } from './protocol';
 import eventEmitter from './eventEmitter';
 import { sendMessage } from './websocket';
-import { isApprovalRequired } from './isApprovalRequired';
+import { isApprovalRequired } from '../features/safety/isApprovalRequired';
 import Environment from './Environment';
 import { processCommandOutput } from './processCommandOutput';
 import { clearChat } from './utils';
-import { SystemOperator } from './SystemOperator';
+import { SystemOperator } from '../features/terminal/SystemOperator';
 
 /**
  * Handles a Techie message by emitting it to the chat UI and updating consumption data.

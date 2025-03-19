@@ -1,5 +1,5 @@
 import { Command, Child } from '@tauri-apps/plugin-shell';
-import eventEmitter from './eventEmitter';
+import { eventEmitter } from '@/utils';
 import { invoke } from '@tauri-apps/api/core';
 
 class TerminalManager {

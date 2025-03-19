@@ -13,10 +13,9 @@ import {
   Link,
   SkeletonText,
 } from '@chakra-ui/react';
-import Environment from '../utils/Environment';
-import { auth } from '../firebaseConfig';
-import eventEmitter from '../utils/eventEmitter';
-import CheckoutModal from './CheckoutModal'; // Import CheckoutModal
+import { Environment, eventEmitter } from '@/utils';
+import { auth } from '@/config/firebaseConfig';
+import { CheckoutModal } from '@/features/user';
 
 interface CreditPackage {
   package_id: string;
