@@ -12,14 +12,17 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 
 const ignoreFiles = [
-    "src/components/main/**",
-    "src/components/wizard/**",
-    "src/components/charts/**",
+    "src/**",
+    "src/firebaseConfig.ts",
+    "src-tauri/.gitignore",
+    "src-tauri/Cargo.lock",
+    "src-tauri/Cargo.toml",
+    "src-tauri/build.rs",
+    "src-tauri/icons/**",
     "src/vite-env.d.ts",
-    "public/**", // skip frontend
+    "public/**",
     "data/**", 
-    "src/assets/**", 
-    "notebooks/**",
+    "src/assets/**",
     "LICENSE", "README.md",
     "Makefile", "Dockerfile",
     "tsconfig.json", "esbuild.js",

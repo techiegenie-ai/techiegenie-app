@@ -7,11 +7,15 @@ import AuthScreen from './components/AuthScreen';
 import { UserPlanResponse } from './components/PlanModal';
 import Environment from './utils/Environment';
 import eventEmitter from './utils/eventEmitter';
+import { CloseConfirmationDialog } from './components/CloseConfirmationDialog';
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import { SystemOperator } from './utils/SystemOperator';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [planData, setPlanData] = useState<UserPlanResponse | null>(null); // State for storing plan data
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -36,6 +40,7 @@ const App: React.FC = () => {
 
   // Polling for email verification status every 5 seconds
   useEffect(() => {
+    // eslint-disable-next-line no-undef
     let interval: NodeJS.Timeout | null = null;
 
     if (!user) {
@@ -95,6 +100,48 @@ const App: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+
+    // Register the close requested listener
+    getCurrentWindow()
+      .onCloseRequested(async (event) => {
+        const systemOperator = await SystemOperator.getInstance();
+        // Check if there are any running processes
+        if (systemOperator.terminal.hasRunningProcesses()) {
+          // Prevent closing immediately
+          event.preventDefault();
+          setIsDialogOpen(true);
+        } else {
+          localStorage.setItem('conversationId', '');
+        }
+      })
+      .then((cleanup) => {
+        unlisten = cleanup; // Store the unlisten function
+      });
+
+    // Cleanup listener on unmount
+    return () => {
+      if (unlisten) {
+        unlisten();
+      }
+    };
+  }, []);
+
+  const handleConfirm = async () => {
+    setIsDialogOpen(false);
+    const systemOperator = await SystemOperator.getInstance();
+    systemOperator.terminal.killAllProcesses();
+    localStorage.setItem('conversationId', '');
+    // Close the window
+    await getCurrentWindow().destroy();
+  };
+
+  const handleCancel = () => {
+    setIsDialogOpen(false);
+    // Window remains open (event was already prevented)
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -104,6 +151,11 @@ const App: React.FC = () => {
       <Flex direction="column" height="100vh">
         {user ? <ChatWindow planData={planData} /> : <AuthScreen />}
       </Flex>
+      <CloseConfirmationDialog
+        isOpen={isDialogOpen}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </ChakraProvider>
   );
 };

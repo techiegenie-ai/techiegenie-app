@@ -57,6 +57,8 @@
     "shell:allow-kill",
     "shell:allow-spawn",
     "shell:allow-execute",
-    "core:path:default"
+    "core:path:default",
+    "core:window:allow-close",
+    "core:window:allow-destroy"
   ]
 }
