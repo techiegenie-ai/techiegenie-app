@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import {
   Avatar,
   Menu,
@@ -10,7 +10,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { HiLogout, HiOutlineBadgeCheck, HiOutlineCog, HiOutlineUser } from 'react-icons/hi';
-import { signOut } from 'firebase/auth';
+import { signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/config/firebaseConfig';
 
 // Lazy load the PlanModal component
@@ -19,6 +19,8 @@ const SettingsModal = React.lazy(() => import('@/features/modals/SettingsModal')
 const TopUpModal = React.lazy(() => import('./TopUpModal'));
 
 const UserProfile: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+
   const {
     isOpen: isSettingsOpen,
     onOpen: onSettingsOpen,
@@ -34,6 +36,14 @@ const UserProfile: React.FC = () => {
     onOpen: onTopUpOpen,
     onClose: onTopUpClose,
   } = useDisclosure();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const openTopUpAndClosePlan = () => {
     onTopUpOpen();
@@ -55,7 +65,15 @@ const UserProfile: React.FC = () => {
         <MenuButton
           as={IconButton}
           aria-label="User Menu"
-          icon={<Avatar size="sm" icon={<HiOutlineUser fontSize="1.5rem" />} bg="var(--chakra-colors-teal-600)" />}
+          icon={
+            <Avatar
+              size="sm"
+              src={user?.photoURL || undefined}
+              name={user?.displayName || undefined}
+              icon={<HiOutlineUser fontSize="1.5rem" />}
+              bg="var(--chakra-colors-teal-600)"
+            />
+          }
           variant="ghost"
           color="var(--chakra-colors-teal-600)"
           _hover={{ bg: 'unset' }}

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+// src/features/auth/AuthScreen.tsx
+import React, { useState, useEffect } from 'react';
 import { Button, Input, VStack, Text, Divider, Icon, HStack, InputGroup, InputRightElement, IconButton } from '@chakra-ui/react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, AuthError, AuthErrorCodes, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, AuthError, AuthErrorCodes, sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/config/firebaseConfig';
 import { HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
 import { GoogleIcon } from '@/components/common';
 import validator from 'validator';
-import { listen } from '@tauri-apps/api/event'
+import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { googleSignIn, openGoogleSignIn } from '@/features/auth';
 import { invoke } from '@tauri-apps/api/core';
 import callbackTemplate from './callback.template';
@@ -17,6 +18,26 @@ const AuthScreen: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [showResetOption, setShowResetOption] = useState(false);
+
+  useEffect(() => {
+    let unlistenFn: UnlistenFn | null = null;
+
+    // Setup the listener
+    listen('oauth://url', (data) => {
+      googleSignIn(data.payload as string);
+    }).then((unlisten) => {
+      unlistenFn = unlisten;
+    }).catch((error) => {
+      console.error('Failed to setup OAuth listener:', error);
+    });
+
+    // Cleanup function
+    return () => {
+      if (unlistenFn) {
+        unlistenFn();
+      }
+    };
+  }, []); // Empty dependency array since this should only run once on mount
 
   const handleAuth = async () => {
     if (!validator.isEmail(email)) {
@@ -59,33 +80,17 @@ const AuthScreen: React.FC = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      setAuthError('Google Sign-In Error: ' + (error as AuthError).message);
-      setShowResetOption(false);
-    }
-  };
-
-  const handleGoogleSignInV2 = async () => {
-    // Wait for callback from tauri oauth plugin
-    listen('oauth://url', (data) => {
-      googleSignIn(data.payload as string);
-    });
-    
     // Start tauri oauth plugin. When receive first request
     // When it starts, will return the server port
     // it will kill the server
     invoke('plugin:oauth|start', {
       config: {
-        // Optional config, but use here to more friendly callback page
         response: callbackTemplate,
       },
     }).then((port) => {
       openGoogleSignIn(port as string);
     });
-  }
+  };
 
   const handlePasswordReset = async () => {
     try {
@@ -196,7 +201,7 @@ const AuthScreen: React.FC = () => {
       </HStack>
       <Button
         leftIcon={<Icon as={GoogleIcon} color="gray.700" fontSize="1.4em" mr={2}/>}
-        onClick={handleGoogleSignInV2}
+        onClick={handleGoogleSignIn}
         colorScheme="gray"
         variant="outline"
         width="100%"

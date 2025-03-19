@@ -19,7 +19,7 @@ const ignoreFiles = [
     "src/features/modals/**",
     "src/features/safety/**",
     "src/features/terminal/**",
-    "src/features/user/**",
+    // "src/features/user/**",
     "src/components/**",
     "src/config/**",
     "src/styles/**",
