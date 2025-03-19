@@ -59,6 +59,8 @@
     "shell:allow-execute",
     "core:path:default",
     "core:window:allow-close",
-    "core:window:allow-destroy"
+    "core:window:allow-destroy",
+    "oauth:allow-start",
+    "oauth:allow-cancel"
   ]
 }

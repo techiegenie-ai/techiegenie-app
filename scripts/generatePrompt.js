@@ -14,11 +14,11 @@ const __filename = fileURLToPath(import.meta.url);
 const ignoreFiles = [
     // "src/**",
     "src-tauri/**",
-    "src/features/auth/**",
+    // "src/features/auth/**",
     "src/features/chat/**",
     "src/features/modals/**",
     "src/features/safety/**",
-    // "src/features/terminal/**",
+    "src/features/terminal/**",
     "src/features/user/**",
     "src/components/**",
     "src/config/**",
