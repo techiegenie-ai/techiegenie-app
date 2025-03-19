@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
-import {ChatWindow} from '@/features/chat';
+import { ChatWindow } from '@/features/chat';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/config/firebaseConfig';
 import { AuthScreen } from '@/features/auth';
@@ -39,7 +39,6 @@ const App: React.FC = () => {
 
   // Polling for email verification status every 5 seconds
   useEffect(() => {
-    // eslint-disable-next-line no-undef
     let interval: NodeJS.Timeout | null = null;
 
     if (!user) {
@@ -72,7 +71,7 @@ const App: React.FC = () => {
     return () => {
       eventEmitter.off('checkCredits', handleCheckCredits);
     };
-  }, [])
+  }, []);
 
   const fetchUserPlanData = async () => {
     try {
