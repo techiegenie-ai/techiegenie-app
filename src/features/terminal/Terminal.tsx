@@ -1,5 +1,4 @@
-// src/components/Terminal.tsx
-
+// src/features/terminal/Terminal.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, VStack, Text, Collapse, IconButton } from '@chakra-ui/react';
 import { eventEmitter, AuditReport, processCommandOutput } from '@/utils';
@@ -69,27 +68,24 @@ const Terminal: React.FC = () => {
           return updatedEntries;
         } else {
           setCmdStopped(true);
-          const isExpanded = false;
-          setAutoScroll(true);  // Enable auto-scrolling for new command
+          setAutoScroll(true); // Enable auto-scrolling for new command
           setIsTerminalVisible(true);
-
-          return [
-            ...prevEntries,
-            {
-              id,
-              command,
-              description,
-              output: stdout || '',
-              error: stderr || '',
-              result: success,
-              report,
-              isExpanded,
-              isRunning,
-              requiresApproval,
-              parsedOutput: stdout != null ? processCommandOutput(stdout ?? '').split('\n') : [],
-              parsedError: stderr != null ? processCommandOutput(stderr ?? '').split('\n') : [],
-            },
-          ];
+          const newEntry = {
+            id,
+            command: command || '',
+            description: description || '',
+            output: stdout || '',
+            error: stderr || '',
+            result: success,
+            report,
+            isExpanded: false,
+            isRunning,
+            requiresApproval,
+            parsedOutput: stdout ? processCommandOutput(stdout).split('\n') : [],
+            parsedError: stderr ? processCommandOutput(stderr).split('\n') : [],
+          };
+          const newEntries = [...prevEntries, newEntry];
+          return newEntries;
         }
       });
     };
@@ -98,9 +94,8 @@ const Terminal: React.FC = () => {
       setEntries([]);
       setCmdStopped(false);
       setHoveredId(null);
-      setAutoScroll(true);  // Enable auto-scrolling when terminal is cleared
+      setAutoScroll(true); // Enable auto-scrolling when terminal is cleared
     };
-
     eventEmitter.on('terminalCommand', handleNewCommand);
     eventEmitter.on('clearTerminal', handleClearTerminal);
 
@@ -132,7 +127,6 @@ const Terminal: React.FC = () => {
     } else {
       terminalElement.removeEventListener('scroll', onScroll);
     }
-
     return () => {
       terminalElement.removeEventListener('scroll', onScroll);
     };
@@ -140,7 +134,7 @@ const Terminal: React.FC = () => {
 
   const handleCancel = async (id: string, isRunning: boolean) => {
     if (!isRunning) return;
-    console.log('Cabcel:', id);
+    console.log('Cancel:', id);
     const systemOperator = await SystemOperator.getInstance();
     await systemOperator.terminal.killProcess(id);
   };
@@ -193,8 +187,8 @@ const Terminal: React.FC = () => {
         height="100%"
         overflowY="auto"
       >
-        {entries.slice(-30).map((entry, index) => (
-          <Box key={index} width="100%" whiteSpace="pre">
+        {entries.slice(-30).map((entry) => (
+          <Box key={entry.id} width="100%" whiteSpace="pre">
             <div ref={startOfTerminalRef} />
             <Text color="green.600">{`# ${entry.description}`}</Text>
             <Text as="span" display="flex" alignItems="center">
@@ -226,10 +220,10 @@ const Terminal: React.FC = () => {
                     <IconButton
                       aria-label={entry.isExpanded ? 'Collapse Error' : 'Expand Error'}
                       icon={entry.isExpanded ? <HiChevronUp /> : <HiChevronDown />}
-                      variant="unstyled" // Use unstyled variant for no background or border
+                      variant="unstyled"
                       size="sx"
                       colorScheme="red.400"
-                      onClick={() => toggleError(index)}
+                      onClick={() => toggleError(entries.indexOf(entry))}
                       ml={0}
                       mr={1}
                       minW="unset"
@@ -240,9 +234,7 @@ const Terminal: React.FC = () => {
                         height: '1em',
                         width: '1em',
                         color: 'red.400',
-                        _hover: {
-                          color: 'red.500',
-                        },
+                        _hover: { color: 'red.500' },
                       }}
                     />
                   )}
@@ -250,7 +242,7 @@ const Terminal: React.FC = () => {
                 </Text>
                 <Collapse in={entry.isExpanded} style={{ overflowY: 'unset', overflowX: 'unset' }}>
                   {entry.parsedError
-                    .filter(e => e.trim().length > 0)
+                    .filter((e) => e.trim().length > 0)
                     .slice(1) // TODO: reduce some data in the middle
                     .map((line, i) => (
                       <Text key={i} color="red.400" ml="calc(1em + var(--chakra-space-1))">
