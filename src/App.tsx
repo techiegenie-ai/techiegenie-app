@@ -9,6 +9,7 @@ import { Environment, eventEmitter } from '@/utils';
 import { CloseConfirmationDialog } from '@/features/modals';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { SystemOperator } from '@/features/terminal';
+import { Updater } from './components/Updater';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -148,6 +149,7 @@ const App: React.FC = () => {
     <ChakraProvider>
       <Flex direction="column" height="100vh">
         {user ? <ChatWindow planData={planData} /> : <AuthScreen />}
+        <Updater />
       </Flex>
       <CloseConfirmationDialog
         isOpen={isDialogOpen}
