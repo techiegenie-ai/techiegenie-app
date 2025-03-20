@@ -4,8 +4,6 @@ import { TechieError } from './protocol'
 
 import { invoke } from '@tauri-apps/api/core';
 
-// const ENVIRONMENT_ENDPOINT = process.env.ENVIRONMENT_ENDPOINT ?? 'https://nwz2n4ootcbj5csth6awr6vjty0ggclp.lambda-url.us-east-1.on.aws';
-
 class Environment {
   private static instance: Environment;
   private profile: ProfileData;

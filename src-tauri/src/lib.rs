@@ -25,7 +25,7 @@ fn get_username() -> String {
 // Command to get ENVIRONMENT_ENDPOINT
 #[tauri::command]
 async fn get_endpoint<R: Runtime>(_app: tauri::AppHandle<R>, _window: tauri::Window<R>) -> Result<String, String> {
-    env::var("ENVIRONMENT_ENDPOINT").or(Ok("http://localhost:3001".to_string()))
+    env::var("ENVIRONMENT_ENDPOINT").or(Ok("https://tmt6sji6nprxnx4fcfa3iznkce0fwdla.lambda-url.us-east-1.on.aws".to_string()))
 }
 
 // Command to get the platform (e.g., "windows", "linux", "macos")
