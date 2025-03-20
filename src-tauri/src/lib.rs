@@ -24,8 +24,13 @@ fn get_username() -> String {
 
 // Command to get ENVIRONMENT_ENDPOINT
 #[tauri::command]
-async fn get_endpoint<R: Runtime>(_app: tauri::AppHandle<R>, _window: tauri::Window<R>) -> Result<String, String> {
-    env::var("ENVIRONMENT_ENDPOINT").or(Ok("https://tmt6sji6nprxnx4fcfa3iznkce0fwdla.lambda-url.us-east-1.on.aws".to_string()))
+async fn get_endpoint<R: Runtime>(
+    _app: tauri::AppHandle<R>,
+    _window: tauri::Window<R>,
+) -> Result<String, String> {
+    env::var("ENVIRONMENT_ENDPOINT").or(Ok(
+        "https://tmt6sji6nprxnx4fcfa3iznkce0fwdla.lambda-url.us-east-1.on.aws".to_string(),
+    ))
 }
 
 // Command to get the platform (e.g., "windows", "linux", "macos")
@@ -65,6 +70,8 @@ fn get_arch() -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_oauth::init())

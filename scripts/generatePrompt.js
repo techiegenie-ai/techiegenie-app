@@ -12,19 +12,19 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 
 const ignoreFiles = [
-    // "src/**",
-    "src-tauri/**",
+    // "src-tauri/**",
     "src/features/auth/**",
-    // "src/features/chat/**",
+    "src/features/chat/**",
     "src/features/modals/**",
     "src/features/safety/**",
     "src/features/terminal/**",
     "src/features/user/**",
     "src/components/**",
     "src/config/**",
-    // "src/styles/**",
+    "src/styles/**",
     "src/types/**",
     "src/utils/**",
+    "src/index.css",
     "src-tauri/.gitignore",
     "src-tauri/Cargo.lock",
     "src-tauri/Cargo.toml",

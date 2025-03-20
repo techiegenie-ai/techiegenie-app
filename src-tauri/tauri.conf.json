@@ -30,6 +30,15 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
-  }
+    ],
+    "createUpdaterArtifacts": true
+    },
+    "plugins": {
+      "updater": {
+        "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY1N0ZDMEIxNTJGM0JFQzcKUldUSHZ2TlNzY0IvWmFrZ1BYVjFPQ2U5bCtiVVJLVlN1dEYvV2lFYVhLbUZXbWRISTUySmNKL28K",
+        "endpoints": [
+          "https://github.com/techiegenie-ai/techiegenie-app/releases/latest/download/latest.json"
+        ]
+      }
+    }
 }
